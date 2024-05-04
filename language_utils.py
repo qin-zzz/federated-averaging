@@ -1,7 +1,37 @@
 import numpy as np
+import json
 
 ALL_LETTERS = "\n !\"&'(),-.0123456789:;>?ABCDEFGHIJKLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz}"
 
+def get_shakespeare(json_path, num_client=100):
+    inputs_lst = []
+    targets_lst = []
+    clients_lst = []
+    data = {}
+
+    with open(json_path, 'r') as inf:
+        cdata = json.load(inf)
+    data.update(cdata['user_data'])
+    list_keys = list(data.keys())
+
+    for (i, key) in enumerate(list_keys[:num_client]):
+        # note: each time we append a list
+        inputs = data[key]["x"]
+        targets = data[key]["y"]
+
+        for input_ in inputs:
+            input_ = process_x(input_)
+            inputs_lst.append(input_.reshape(-1))
+
+        for target in targets:
+            target = process_y(target)
+            targets_lst += target[0]
+
+        for _ in range(0, len(inputs)):
+            clients_lst.append(i)
+
+    return inputs_lst, targets_lst, clients_lst
+      
 def word_to_indices(word):
     '''returns a list of character indices
 

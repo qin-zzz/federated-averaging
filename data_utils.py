@@ -5,11 +5,6 @@ import torch
 from torch.utils.data import Subset
 import torchvision
 
-from torchvision.datasets import VisionDataset
-import os.path
-import json
-from language_utils import process_x, process_y
-
 
 def iid_partition(
     train_idcs, train_labels, m_per_shard=300, n_shards_per_client=2
@@ -87,34 +82,3 @@ class CustomSubset(Subset):
             x = self.subset_transform(x)
       
         return x, y   
-
-
-def get_shakespeare(json_path, num_client=100):
-    inputs_lst = []
-    targets_lst = []
-    clients_lst = []
-    data = {}
-
-    with open(json_path, 'r') as inf:
-        cdata = json.load(inf)
-    data.update(cdata['user_data'])
-    list_keys = list(data.keys())
-
-    for (i, key) in enumerate(list_keys[:num_client]):
-        # note: each time we append a list
-        inputs = data[key]["x"]
-        targets = data[key]["y"]
-
-        for input_ in inputs:
-            input_ = process_x(input_)
-            inputs_lst.append(input_.reshape(-1))
-
-        for target in targets:
-            target = process_y(target)
-            targets_lst += target[0]
-
-        for _ in range(0, len(inputs)):
-            clients_lst.append(i)
-
-    return inputs_lst, targets_lst, clients_lst
-      

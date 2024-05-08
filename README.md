@@ -2,26 +2,79 @@
 
 This is a reproduction of [Communication-Efficient Learning of Deep Networks from Decentralized Data](https://arxiv.org/pdf/1602.05629).
 
-The simulator is implemented in `fl_devices.py`. Experiment results on three datasets, namely MNIST, CIFAR10 and Shakespeare, are shown in `xxx.ipynb`.
+Experiments conducted on 3 datasets: MNIST, CIFAR10 and Shakespeare.
 
-All experiments consist of the following steps:
-- Loading data
-- Distributing Data (IID VS non-IID)
-- Building Models
-- Training
+## Setup
+1. Navigate to the directory and execute `layout.sh` in the terminal.
+```bash
+chmod +x layout.sh
+./layout.sh
+```
 
-The major parameters in the model:
-- `C`: the fraction of clients that perform computation on each round
-- `B`: the local minibatch size used for the client updates
-- `E`: the number of training passes each client makes over its local dataset on each round
+2. To obtain the dataset for Shakespeare, follow the instructions provided at: https://github.com/TalwalkarLab/leaf/tree/master/data/shakespeare, and run the following command to generate the corresponding `.json` files
+```bash
+./preprocess.sh -s niid --sf 0.2 -k 0 -t sample -tf 0.8
+```
 
-Target results of all experiments from the paper:
+3. Place the generated files under `./data/shakespeare`. 
 
-| | MNIST 2NN IID | MNIST 2NN non-IID | MNIST CNN IID | MNIST CNN non-IID | CIFAR CNN IID | Shakespeare LSTM non-IID |
+After completing the above steps, the file structure should resemble the following:
+```
+.
+├── README.md
+├── data
+│   └── shakespeare
+├── exp_cifar10.ipynb
+├── exp_mnist.ipynb
+├── exp_shakespeare.ipynb
+├── img
+│   ├── CIFAR10
+│   ├── MNIST
+│   └── SHAKESPEARE
+├── layout.sh
+├── requirements.txt
+├── src
+│   ├── config.py
+│   ├── data_utils.py
+│   ├── fl_devices.py
+│   ├── helper.py
+│   ├── models.py
+│   ├── sampling.py
+│   └── simulate.py
+└── stats
+    ├── CIFAR10
+    ├── MNIST
+    └── SHAKESPEARE
+```
+
+The simulator is implemented in `fl_devices.py` and `simulate.py`. Experiments are saved separately in `xxx.ipynb`.
+
+## Results 
+
+The experiments tested the major parameters in the `FedAvg` algorithm:
+- `C`: fraction of clients that perform computation in each round 
+- `B`: local minibatch size used for the client updates
+- `E`: number of training passes at each client over the local data in each round
+
+For each dataset, the simulation consist of the following steps:
+- Load data
+- Sample (IID VS non-IID)
+- Model
+- Train
+
+The target performance from the paper (with a default number of clients = 100) is as follows:
+
+| | MNIST MLP IID | MNIST MLP non-IID | MNIST CNN IID | MNIST CNN non-IID | CIFAR CNN IID | Shakespeare stacked-LSTM non-IID |
 | -------- | -------- | ------- | -------- | ------- | -------- | ------- |
+| (C,B,E) | (10,10,1) | (10,10,1) | (10,10,5) | (10,10,5) | (10,50,5) | (10,50,5) | 
+| Target Rounds | 87 | 664 | 18 | 206 | 280 | 60 | 
 | Target Accuracy | 97% | 97% | 99% | 99% | 80% | 54% | 
-| Target Rounds | <100 | <800 | <20 | <300 | <500 | <600 | 
+| Actual Rounds | 50 | 50 | 50 | 50 | 50 | 20 | 
+| Accuracy after Actual Rounds | 97% | 97% | 99% | 99% | 80% | 54% | 
 
-To do:
-- Experiment results on CIFAR10 and Shakespeare are by far not well
+Here are the results:
+
+
+## To do:
+- Improve the results on CIFAR10 and Shakespeare
 - Increasing parallelism

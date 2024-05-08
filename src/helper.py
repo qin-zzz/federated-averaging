@@ -51,13 +51,13 @@ def display_train_stats(cfl_stats, title = "", label="", target_accuracy=0.97):
 def plot_accuracy(dataset, keyword, num_epoch=100):
     target_accuracy = target_accuracy_set[dataset]
 
-    stats_dir = os.path.join(stats_dir, dataset)
+    stats_dir = f'{stats_dir_root}/{dataset}'
     names = [f for f in os.listdir(stats_dir) if re.match(keyword, f)]
 
     plt.figure(figsize=(8,6))
 
     # plt.axis([0, 100, 0.9, 1])
-    x = np.arange(1,101)
+    x = np.arange(1,num_epoch+1)
 
     for fname in names:
         print(fname)

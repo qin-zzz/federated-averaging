@@ -73,12 +73,14 @@ The target performance from the paper (with a default number of clients = 100) i
 | Accuracy after Actual Rounds | 97%(32) | 94% | 98% | 98% | - | - | 
 
 Here are some examples of the graphs:
+
 **exp_mnist.ipynb**
 
 ![mnist_mlp_iid](./assets/mnist_mlp_iid.png)
 ![mnist_mlp_noniid](./assets/mnist_mlp_noniid.png)
 
 **exp_cifar10.ipynb**
+
 ![cifar10](./assets/cifar10.png)
 
 ## To do:
